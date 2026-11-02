@@ -414,6 +414,118 @@ ul.tags li:nth-child(4n+3) { background: color-mix(in srgb, var(--c3) 18%, trans
 ul.tags li:nth-child(4n+4) { background: color-mix(in srgb, var(--c4) 24%, transparent); }
 ul.tags li:hover { translate: 0 -3px; rotate: -2deg; }
 
+[hidden] { display: none !important; }
+
+/* Cards with a cover image (e.g. Work) */
+.card.has-media { padding-top: 0; display: flex; flex-direction: column; }
+.card-media {
+  position: relative;
+  margin: 0 -28px 22px;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--code-bg);
+  border-bottom: 1px solid var(--border);
+}
+.card-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  border-radius: 0;
+  transition: scale 0.7s cubic-bezier(.2, .8, .2, 1);
+}
+.card:hover .card-media img { scale: 1.06; }
+
+.card-media.is-video::after {
+  content: "▶";
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  padding-left: 3px;
+  border-radius: 50%;
+  font-size: 15px;
+  color: #1a1023;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.4);
+  transition: scale 0.3s cubic-bezier(.2, .8, .2, 1);
+}
+.card:hover .card-media.is-video::after { scale: 1.12; }
+
+.card.has-media .link-row { margin-top: auto; padding-top: 18px; gap: 8px; }
+.card .btn { padding: 8px 16px; font-size: 0.85rem; border-width: 1.5px; }
+
+/* Filter chips above a long card grid */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -16px 0 28px;
+}
+.filter {
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 8px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  color: var(--text);
+  background: transparent;
+  border: 1.5px solid var(--border);
+  transition: background-color 0.25s, color 0.25s, border-color 0.25s;
+}
+.filter:hover { border-color: var(--text); }
+.filter.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+/* On-page viewer for videos and full-length editorials */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 56px 16px 24px;
+  background: rgba(12, 6, 16, 0.86);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.lightbox-stage { max-width: 100%; max-height: 100%; display: grid; place-items: center; }
+.lightbox video {
+  display: block;
+  max-width: min(92vw, 1100px);
+  max-height: calc(100vh - 100px);
+  border-radius: 18px;
+  background: #000;
+}
+.lightbox-scroll {
+  width: min(560px, 92vw);
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+  border-radius: 18px;
+  background: #fff;
+  overscroll-behavior: contain;
+}
+.lightbox-scroll img { display: block; width: 100%; border-radius: 0; }
+.lightbox-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  color: #1a1023;
+  background: #fff;
+}
+.lightbox-open, .lightbox-open body { overflow: hidden; }
+
 /* Heading-plus-tags cards (e.g. Skills): one full-width row each, heading on the left. */
 .cards.cards-rows { grid-template-columns: 1fr; gap: 16px; }
 .cards-rows .card {
@@ -528,6 +640,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 32px 0; }
   .section-num { margin-top: 0; }
   .finale h2 { align-items: center; font-size: min(3.4rem, 14vw); }
   .card { padding: 26px 22px 22px; border-radius: 24px; }
+  .card-media { margin: 0 -22px 20px; }
   .section.finale { border-radius: 28px; }
 }
 

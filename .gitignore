@@ -15,3 +15,7 @@ Thumbs.db
 
 # Resume PDF contains phone numbers — keep it local
 *.pdf
+
+# Raw project sources stay local; web-sized copies live in assets/projects/
+/projects/
+!assets/projects/pdf/*.pdf

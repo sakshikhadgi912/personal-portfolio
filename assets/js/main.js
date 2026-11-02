@@ -79,11 +79,12 @@ function render(markdown) {
   buildSections();
   buildMarquee();
 
-  // External links open in a new tab.
-  document.querySelectorAll('main a[href^="http"]').forEach((a) => {
+  // External links and PDFs open in a new tab.
+  document.querySelectorAll('main a[href^="http"], main a[href$=".pdf"]').forEach((a) => {
     a.target = '_blank';
     a.rel = 'noopener';
   });
+  setupLightbox();
 
   highlightActiveSection();
   animate();
@@ -183,6 +184,10 @@ function buildSections() {
     });
     section.appendChild(body);
     markLinkRows(body);
+    if (cards) {
+      Array.from(cards.children).forEach(addCardMedia);
+      addFilters(cards);
+    }
 
     // Cards that are just a heading plus tags read better as full-width rows.
     if (cards && Array.from(cards.children).every((c) =>
@@ -191,6 +196,123 @@ function buildSections() {
     }
 
     if (i === sections.length - 1 && sections.length > 1) section.classList.add('finale');
+  });
+}
+
+// An image on its own line inside a card becomes the card's cover; clicking it
+// opens the card's first link.
+function addCardMedia(card) {
+  const p = Array.from(card.querySelectorAll('p')).find((el) =>
+    el.children.length === 1 && el.firstElementChild.nodeName === 'IMG' && !el.textContent.trim());
+  if (!p) return;
+  const img = p.firstElementChild;
+  img.loading = 'lazy';
+  img.decoding = 'async';
+  const media = document.createElement('div');
+  media.className = 'card-media';
+  media.appendChild(img);
+  p.remove();
+  card.prepend(media);
+  card.classList.add('has-media');
+
+  const first = card.querySelector('.link-row a, p a');
+  if (first) {
+    media.addEventListener('click', () => first.click());
+    if (isVideo(first.href)) media.classList.add('is-video');
+  }
+}
+
+// Long card lists get filter chips built from the first part of each card's
+// *Category · Detail* line.
+function addFilters(cards) {
+  const items = Array.from(cards.children);
+  const category = (card) => (card.querySelector('.meta')?.textContent.split('·')[0] || '').trim();
+  const names = [...new Set(items.map(category).filter(Boolean))];
+  if (items.length < 8 || names.length < 2) return;
+
+  items.forEach((card) => { card.dataset.category = category(card); });
+  const bar = document.createElement('div');
+  bar.className = 'filters';
+  bar.setAttribute('role', 'toolbar');
+  bar.setAttribute('aria-label', 'Filter projects');
+  ['All', ...names].forEach((name, i) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'filter' + (i === 0 ? ' active' : '');
+    btn.textContent = name;
+    btn.setAttribute('aria-pressed', String(i === 0));
+    btn.addEventListener('click', () => {
+      bar.querySelectorAll('.filter').forEach((b) => {
+        b.classList.toggle('active', b === btn);
+        b.setAttribute('aria-pressed', String(b === btn));
+      });
+      const shown = items.filter((c) => name === 'All' || c.dataset.category === name);
+      items.forEach((c) => { c.hidden = !shown.includes(c); });
+      if (window.gsap && !reduceMotion) {
+        gsap.fromTo(shown, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out', stagger: 0.04, overwrite: true, clearProps: 'transform' });
+        ScrollTrigger.refresh();
+      }
+    });
+    bar.appendChild(btn);
+  });
+  cards.before(bar);
+}
+
+function isVideo(href) { return /\.(mp4|m4v|mov|webm)$/i.test(new URL(href, location.href).pathname); }
+function isImage(href) { return /\.(jpe?g|png|webp|gif)$/i.test(new URL(href, location.href).pathname); }
+
+// Videos and full-length editorial images open in an on-page viewer;
+// PDFs open in a new tab with the browser's own viewer.
+function setupLightbox() {
+  const box = document.createElement('div');
+  box.className = 'lightbox';
+  box.hidden = true;
+  box.setAttribute('role', 'dialog');
+  box.setAttribute('aria-modal', 'true');
+  box.innerHTML = '<button class="lightbox-close" type="button" aria-label="Close">✕</button><div class="lightbox-stage"></div>';
+  document.body.appendChild(box);
+  const stage = box.querySelector('.lightbox-stage');
+  let lastFocus = null;
+
+  const close = () => {
+    box.hidden = true;
+    stage.innerHTML = '';
+    document.documentElement.classList.remove('lightbox-open');
+    if (lastFocus) lastFocus.focus();
+  };
+  const open = (href, label) => {
+    lastFocus = document.activeElement;
+    stage.innerHTML = '';
+    if (isVideo(href)) {
+      const video = document.createElement('video');
+      video.src = href;
+      video.controls = true;
+      video.autoplay = true;
+      video.playsInline = true;
+      stage.appendChild(video);
+    } else {
+      const scroller = document.createElement('div');
+      scroller.className = 'lightbox-scroll';
+      const img = document.createElement('img');
+      img.src = href;
+      img.alt = label;
+      scroller.appendChild(img);
+      stage.appendChild(scroller);
+    }
+    box.setAttribute('aria-label', label);
+    box.hidden = false;
+    document.documentElement.classList.add('lightbox-open');
+    box.querySelector('.lightbox-close').focus();
+  };
+
+  box.addEventListener('click', (e) => { if (e.target === box || e.target.closest('.lightbox-close')) close(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !box.hidden) close(); });
+  content.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href]');
+    if (!a || !(isVideo(a.href) || isImage(a.href))) return;
+    e.preventDefault();
+    const title = a.closest('.card')?.querySelector('h3')?.textContent || a.textContent;
+    open(a.href, title);
   });
 }
 
