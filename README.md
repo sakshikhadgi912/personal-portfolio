@@ -14,7 +14,7 @@ Editorial & Content Lead with a background in fashion management and design, exp
 ### Editorial Designer — ICH Creative Consulting LLP
 *June 2024 – May 2025*
 
-- **Secured business expansion:** Contributed to Myntra extending and expanding its contract, resulting in 40% business growth.
+- **Secured business expansion:** Contributed to Myntra extending and expanding its contract, resulting in ~38% business growth.
 - **Editorial strategy:** Planned and structured the editorial calendar, aligning content strategies and curation with consumer sentiment and upcoming fashion trends.
 - **Creative direction:** Oversaw end-to-end execution of digital editorials, from visual storytelling to narrative building.
 - **Campaign & marketing content:** Designed in-house marketing content and campaigns to strengthen brand engagement.

@@ -17,7 +17,8 @@ document.getElementById('year').textContent = new Date().getFullYear();
 setupThemeToggle();
 setupHeader();
 
-import('./scene.js')
+// Carry main.js's ?v= cache-busting stamp over to scene.js.
+import('./scene.js' + new URL(import.meta.url).search)
   .then((m) => m.initScene(document.getElementById('scene'), { reduceMotion }))
   .catch((err) => console.warn('3D scene unavailable, using gradient fallback.', err));
 
