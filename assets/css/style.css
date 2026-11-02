@@ -173,7 +173,7 @@ img { max-width: 100%; height: auto; border-radius: 20px; }
 .hero h1 {
   font-family: var(--display);
   font-weight: 800;
-  font-size: clamp(3.2rem, 12.5vw, 10.5rem);
+  font-size: clamp(2rem, 12.5vw, 10.5rem);
   line-height: 0.88;
   letter-spacing: -0.045em;
   text-transform: uppercase;
