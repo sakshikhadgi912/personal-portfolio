@@ -324,7 +324,8 @@ img { max-width: 100%; height: auto; border-radius: 20px; }
   border-radius: 28px;
   padding: 30px 28px 26px;
   overflow: hidden;
-  transition: transform 0.45s cubic-bezier(.2, .8, .2, 1), box-shadow 0.45s;
+  /* Hover uses translate/rotate, not transform, so it never fights the GSAP entrance. */
+  transition: translate 0.45s cubic-bezier(.2, .8, .2, 1), rotate 0.45s cubic-bezier(.2, .8, .2, 1), box-shadow 0.45s;
 }
 .card:nth-child(4n+2) { --card-c: var(--c2); }
 .card:nth-child(4n+3) { --card-c: var(--c3); }
@@ -345,7 +346,8 @@ img { max-width: 100%; height: auto; border-radius: 20px; }
 }
 
 .card:hover {
-  transform: translateY(-8px) rotate(-0.6deg);
+  translate: 0 -8px;
+  rotate: -0.6deg;
   box-shadow: 0 30px 60px -28px color-mix(in srgb, var(--card-c) 70%, transparent);
 }
 .card:hover::before { transform: scale(2.4); opacity: 0.22; }
@@ -405,12 +407,25 @@ ul.tags li {
   font-weight: 500;
   border-radius: 999px;
   background: color-mix(in srgb, var(--c1) 16%, transparent);
-  transition: transform 0.25s cubic-bezier(.2, .8, .2, 1);
+  transition: translate 0.25s cubic-bezier(.2, .8, .2, 1), rotate 0.25s cubic-bezier(.2, .8, .2, 1);
 }
 ul.tags li:nth-child(4n+2) { background: color-mix(in srgb, var(--c2) 20%, transparent); }
 ul.tags li:nth-child(4n+3) { background: color-mix(in srgb, var(--c3) 18%, transparent); }
 ul.tags li:nth-child(4n+4) { background: color-mix(in srgb, var(--c4) 24%, transparent); }
-ul.tags li:hover { transform: translateY(-3px) rotate(-2deg); }
+ul.tags li:hover { translate: 0 -3px; rotate: -2deg; }
+
+/* Heading-plus-tags cards (e.g. Skills): one full-width row each, heading on the left. */
+.cards.cards-rows { grid-template-columns: 1fr; gap: 16px; }
+.cards-rows .card {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  align-items: center;
+  gap: 8px 32px;
+}
+.cards-rows ul.tags { margin: 0; }
+@media (max-width: 640px) {
+  .cards-rows .card { grid-template-columns: 1fr; gap: 14px; }
+}
 
 /* Last section: big gradient call-to-action panel */
 .section.finale {

@@ -183,6 +183,12 @@ function buildSections() {
     section.appendChild(body);
     markLinkRows(body);
 
+    // Cards that are just a heading plus tags read better as full-width rows.
+    if (cards && Array.from(cards.children).every((c) =>
+      Array.from(c.children).every((el) => el.nodeName === 'H3' || el.matches('ul.tags')))) {
+      cards.classList.add('cards-rows');
+    }
+
     if (i === sections.length - 1 && sections.length > 1) section.classList.add('finale');
   });
 }
@@ -254,12 +260,12 @@ function animate() {
     start: 'top 90%',
     onEnter: (batch) => gsap.fromTo(batch,
       { y: 70, opacity: 0, rotate: 1.5 },
-      { y: 0, opacity: 1, rotate: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, overwrite: true }),
+      { y: 0, opacity: 1, rotate: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, overwrite: true, clearProps: 'transform' }),
   });
 
   gsap.utils.toArray('ul.tags').forEach((ul) => {
-    gsap.from(ul.children, {
-      scale: 0.5, opacity: 0, duration: 0.6, ease: 'back.out(2)', stagger: 0.04,
+    gsap.fromTo(ul.children, { scale: 0.5, opacity: 0 }, {
+      scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(2)', stagger: 0.04, clearProps: 'transform',
       scrollTrigger: { trigger: ul, start: 'top 92%' },
     });
   });
