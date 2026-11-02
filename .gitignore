@@ -12,3 +12,6 @@ Thumbs.db
 
 # Local Claude settings
 .claude/settings.local.json
+
+# Resume PDF contains phone numbers — keep it local
+*.pdf

@@ -65,6 +65,19 @@
       current.appendChild(node);
     });
 
+    // A paragraph that is only *italic text* right under a ### heading is a date line.
+    content.querySelectorAll('h3 + p').forEach((p) => {
+      if (p.childNodes.length === 1 && p.firstChild.nodeName === 'EM') p.classList.add('meta');
+    });
+
+    // Lists of short items (skills, tools) render as tags.
+    content.querySelectorAll('ul').forEach((ul) => {
+      const items = Array.from(ul.children);
+      if (items.length > 1 && items.every((li) => li.textContent.length <= 48 && !li.querySelector('ul'))) {
+        ul.classList.add('tags');
+      }
+    });
+
     // External links open in a new tab.
     document.querySelectorAll('main a[href^="http"]').forEach((a) => {
       a.target = '_blank';

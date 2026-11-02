@@ -149,6 +149,25 @@ img { max-width: 100%; height: auto; border-radius: var(--radius); }
 .section ul { padding-left: 1.2em; }
 .section li { margin: 6px 0; }
 
+.section .meta { margin: 0 0 8px; font-size: 0.9rem; color: var(--muted); }
+.section .meta em { font-style: normal; }
+
+.section ul.tags {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.section ul.tags li {
+  margin: 0;
+  padding: 4px 12px;
+  font-size: 0.9rem;
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
 blockquote {
   margin: 20px 0;
   padding: 12px 20px;
