@@ -1,8 +1,8 @@
 # Sakshi Khadgi
 
-**Editorial & Content Lead** · Bengaluru, India
+**Visual Designer** · Bengaluru, India
 
-Editorial & Content Lead with a background in fashion management and design, experienced across editorial strategy, event coordination, and digital marketing. Skilled in creative design tools, blending fashion expertise with content storytelling for global and Indian markets.
+Visual Designer with a background in fashion management and design, experienced across editorial strategy, event coordination, and digital marketing. Skilled in creative design tools, blending fashion expertise with content storytelling for global and Indian markets.
 
 [Email](mailto:Saakshikhadgi912@gmail.com) · [LinkedIn](https://www.linkedin.com/in/sakshi-khadgi-005890156/)
 
@@ -171,7 +171,7 @@ A UX pitch for Birla Opus's online wallpaper journey: an "Inspire › Clarify �
 [View deck](assets/projects/pdf/birla-opus-pitch-deck.pdf)
 
 ### Metaverse Fashion Marketing
-*MA research · University of Southampton*
+*Research · University of Southampton*
 
 ![Metaverse fashion marketing dissertation](assets/projects/cover/metaverse.jpg)
 
@@ -180,7 +180,7 @@ My MA dissertation on how metaverse marketing — digital storefronts, virtual e
 [Read dissertation](assets/projects/pdf/metaverse-fashion-marketing.pdf)
 
 ### Vave
-*MA research · University of Southampton*
+*Research · University of Southampton*
 
 ![Vave brand packaging](assets/projects/cover/vave.jpg)
 
@@ -189,7 +189,7 @@ A sustainable, gender-fluid fashion brand built from scratch: consumer persona, 
 [View presentation](assets/projects/pdf/vave-presentation.pdf) · [Read report](assets/projects/pdf/vave-illustrated-report.pdf)
 
 ### Kilt Me, Baby.
-*MA research · University of Southampton*
+*Research · University of Southampton*
 
 ![Kilt Me, Baby launch page](assets/projects/cover/kilt-me-baby.jpg)
 
