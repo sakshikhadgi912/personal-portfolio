@@ -416,6 +416,90 @@ ul.tags li:hover { translate: 0 -3px; rotate: -2deg; }
 
 [hidden] { display: none !important; }
 
+/* Stat tiles: "- **13.1k** followers" */
+.section-body > p > em:only-child { font-style: normal; font-size: 0.9rem; color: var(--muted); }
+
+ul.stats {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 16px;
+  padding: 0;
+  margin: 28px 0 48px;
+}
+ul.stats li {
+  --tile-c: var(--c1);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 24px 22px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--tile-c) 22%, transparent), transparent 60%),
+    var(--surface);
+  container-type: inline-size;
+}
+ul.stats li:nth-child(4n+2) { --tile-c: var(--c2); }
+ul.stats li:nth-child(4n+3) { --tile-c: var(--c3); }
+ul.stats li:nth-child(4n+4) { --tile-c: var(--c4); }
+.stat-value {
+  font-family: var(--display);
+  font-weight: 800;
+  /* Scale with the tile so five-character values like "22.6k" always fit. */
+  font-size: min(3rem, 21cqi);
+  line-height: 1;
+  white-space: nowrap;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.stat-label { color: var(--muted); font-size: 0.95rem; }
+
+/* Bar chart: "- [6,992](link)" items */
+ul.bars {
+  list-style: none;
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(4px, 1vw, 12px);
+  height: 260px;
+  padding: 28px 0 0;
+  margin: 16px 0 8px;
+  border-bottom: 1.5px solid var(--border);
+}
+ul.bars li { flex: 1; height: 100%; display: flex; align-items: flex-end; margin: 0; }
+ul.bars .bar {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: calc(var(--h) * 100%);
+  min-height: 6px;
+  border-radius: 10px 10px 3px 3px;
+  background: color-mix(in srgb, var(--c3) 45%, var(--surface));
+  transform-origin: bottom;
+  transition: background-color 0.25s;
+}
+ul.bars li.is-max .bar { background: linear-gradient(180deg, var(--c1), var(--c2)); }
+ul.bars .bar:hover { background: var(--c1); text-decoration: none; }
+.bar-value {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  translate: -50% 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--muted);
+}
+ul.bars li.is-max .bar-value { color: var(--text); }
+@media (max-width: 640px) {
+  ul.bars { height: 200px; }
+  /* Too narrow for every label: keep the top reel's, show others on hover. */
+  .bar-value { opacity: 0; }
+  ul.bars li.is-max .bar-value,
+  ul.bars .bar:hover .bar-value { opacity: 1; }
+}
+
 /* Cards with a cover image (e.g. Work) */
 .card.has-media { padding-top: 0; display: flex; flex-direction: column; }
 .card-media {

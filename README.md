@@ -197,6 +197,35 @@ A concept digital display and 2025 website launch for a sustainable Scottish kil
 
 [View project](assets/projects/pdf/kilt-me-baby.pdf)
 
+## Instagram
+
+I manage Instagram for ICH NEXT®, India's first indigenous trend forecast for fashion retail.
+
+*@ichnext.official · public profile stats, last updated 8 November 2026*
+
+- **13.1k** followers
+- **6,992** views on the top reel
+- **1,880** average views per reel
+- **22.6k** views across the last 12 reels
+- **3** reels passed 4,000 views
+
+**Views on the last 12 reels, oldest to newest**
+
+- [4,135](https://www.instagram.com/ichnext.official/reel/Delij4qq2vO/)
+- [590](https://www.instagram.com/ichnext.official/reel/DeoMWftKNlS/)
+- [489](https://www.instagram.com/ichnext.official/reel/DeqpakkquzN/)
+- [830](https://www.instagram.com/ichnext.official/reel/DetHdUiqGf9/)
+- [905](https://www.instagram.com/ichnext.official/reel/DeyRZQaqPYB/)
+- [769](https://www.instagram.com/ichnext.official/reel/De09Y9fqaJJ/)
+- [1,084](https://www.instagram.com/ichnext.official/reel/De3XAODq2fu/)
+- [1,305](https://www.instagram.com/ichnext.official/reel/De_UGhqqvms/)
+- [4,520](https://www.instagram.com/ichnext.official/reel/DfMTCFKqAL9/)
+- [6,992](https://www.instagram.com/ichnext.official/reel/DfPW7UfTCqV/)
+- [523](https://www.instagram.com/ichnext.official/reel/DfRQ7yuK1wv/)
+- [413](https://www.instagram.com/ichnext.official/reel/DfV3oAkqDpX/)
+
+[Watch the top reel](https://www.instagram.com/ichnext.official/reel/DfPW7UfTCqV/) · [Visit @ichnext.official](https://www.instagram.com/ichnext.official/)
+
 ## Experience
 
 ### Editorial & Content Lead — ICH Creative Consulting LLP

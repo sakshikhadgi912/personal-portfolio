@@ -147,9 +147,87 @@ function markDatesAndTags() {
   });
   content.querySelectorAll('ul').forEach((ul) => {
     const items = Array.from(ul.children);
+    if (items.length > 1 && items.every(isStatItem)) return buildStats(ul);
+    if (items.length > 2 && items.every(isBarItem)) return buildBars(ul);
     if (items.length > 1 && items.every((li) => li.textContent.length <= 48 && !li.querySelector('ul'))) {
       ul.classList.add('tags');
     }
+  });
+}
+
+// "13.1k", "6,992", "14%", "~38%" ...
+const NUMBER = /^[~≈]?\d[\d,]*(\.\d+)?\s*[kKmM%+]?$/;
+
+function parseNumber(text) {
+  const t = text.trim();
+  const n = parseFloat(t.replace(/[^\d.]/g, ''));
+  const suffix = (t.match(/[kKmM%+]$/) || [''])[0];
+  return n * ({ k: 1e3, K: 1e3, m: 1e6, M: 1e6 }[suffix] || 1);
+}
+
+// "- **13.1k** followers" -> big stat tile
+function isStatItem(li) {
+  const s = li.firstElementChild;
+  return s && s.nodeName === 'STRONG' && li.firstChild === s && NUMBER.test(s.textContent.trim());
+}
+
+function buildStats(ul) {
+  ul.classList.add('stats');
+  Array.from(ul.children).forEach((li) => {
+    const value = li.firstElementChild;
+    value.className = 'stat-value';
+    const label = document.createElement('span');
+    label.className = 'stat-label';
+    while (value.nextSibling) label.appendChild(value.nextSibling);
+    label.textContent = label.textContent.trim();
+    li.appendChild(label);
+  });
+}
+
+// "- [6,992](link)" items -> bar chart; each bar links to its source
+function isBarItem(li) {
+  const a = li.querySelector('a');
+  return a && li.children.length === 1 && li.textContent.trim() === a.textContent.trim() && NUMBER.test(a.textContent.trim());
+}
+
+function buildBars(ul) {
+  ul.classList.add('bars');
+  const items = Array.from(ul.children);
+  const values = items.map((li) => parseNumber(li.textContent));
+  const max = Math.max(...values);
+  items.forEach((li, i) => {
+    const a = li.querySelector('a');
+    const label = a.textContent.trim();
+    a.className = 'bar';
+    a.setAttribute('aria-label', label + ' views');
+    a.textContent = '';
+    const value = document.createElement('span');
+    value.className = 'bar-value';
+    value.textContent = label;
+    a.appendChild(value);
+    li.style.setProperty('--h', (values[i] / max).toFixed(3));
+    if (values[i] === max) li.classList.add('is-max');
+  });
+}
+
+// Count stat numbers up from zero, keeping their original formatting.
+function countUp(el) {
+  const text = el.textContent.trim();
+  const prefix = (text.match(/^[~≈]/) || [''])[0];
+  const suffix = (text.match(/[kKmM%+]$/) || [''])[0];
+  const core = text.slice(prefix.length, text.length - suffix.length);
+  const target = parseFloat(core.replace(/,/g, ''));
+  const decimals = (core.split('.')[1] || '').length;
+  const commas = core.includes(',');
+  const state = { n: 0 };
+  gsap.to(state, {
+    n: target, duration: 1.6, ease: 'power2.out',
+    scrollTrigger: { trigger: el, start: 'top 90%' },
+    onUpdate: () => {
+      const s = state.n.toFixed(decimals);
+      el.textContent = prefix + (commas ? Number(s).toLocaleString('en-US', { minimumFractionDigits: decimals }) : s) + suffix;
+    },
+    onComplete: () => { el.textContent = text; },
   });
 }
 
@@ -390,6 +468,15 @@ function animate() {
     gsap.fromTo(ul.children, { scale: 0.5, opacity: 0 }, {
       scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(2)', stagger: 0.04, clearProps: 'transform',
       scrollTrigger: { trigger: ul, start: 'top 92%' },
+    });
+  });
+
+  document.querySelectorAll('.stat-value').forEach(countUp);
+
+  gsap.utils.toArray('ul.bars').forEach((ul) => {
+    gsap.fromTo(ul.querySelectorAll('.bar'), { scaleY: 0 }, {
+      scaleY: 1, duration: 1, ease: 'expo.out', stagger: 0.06, clearProps: 'transform',
+      scrollTrigger: { trigger: ul, start: 'top 85%' },
     });
   });
 
