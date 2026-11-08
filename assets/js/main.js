@@ -5,22 +5,16 @@
 //   ### Heading 3        -> a card inside that section ("Role — Company" splits in two)
 //   *italic line*        -> under a ### heading, shown as a date badge
 //   list of short items  -> shown as tags (and fed into the scrolling marquee)
+// Sections with many *Category · Detail* cards become folders; sections whose
+// cards are all dated become a timeline.
 
 const hero = document.getElementById('hero');
 const heroInner = document.getElementById('hero-inner');
 const content = document.getElementById('content');
 const nav = document.getElementById('nav');
-const header = document.getElementById('header');
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 document.getElementById('year').textContent = new Date().getFullYear();
-setupThemeToggle();
-setupHeader();
-
-// Carry main.js's ?v= cache-busting stamp over to scene.js.
-import('./scene.js' + new URL(import.meta.url).search)
-  .then((m) => m.initScene(document.getElementById('scene'), { reduceMotion }))
-  .catch((err) => console.warn('3D scene unavailable, using gradient fallback.', err));
 
 fetch('README.md', { cache: 'no-cache' })
   .then((res) => {
@@ -90,13 +84,46 @@ function render(markdown) {
   animate();
 }
 
+// Hero: "my name is", the name in an outlined box, and the first intro line
+// split on "·" into sticky notes with hand-drawn arrows pointing at the name.
 function decorateHero() {
   const h1 = heroInner.querySelector('h1');
-  if (h1) splitChars(h1);
+  if (!h1) return markLinkRows(heroInner);
+  splitChars(h1);
 
-  const paragraphs = heroInner.querySelectorAll('p');
-  if (paragraphs[0] && !isLinkRow(paragraphs[0])) paragraphs[0].classList.add('kicker');
+  const stage = document.createElement('div');
+  stage.className = 'name-stage';
+  stage.innerHTML =
+    '<p class="hello">my name is<svg width="70" height="8" viewBox="0 0 70 8" aria-hidden="true">' +
+    '<path d="M2 5 Q18 1 35 4 T68 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></p>';
+  const box = document.createElement('div');
+  box.className = 'name-box';
+  h1.replaceWith(stage);
+  box.appendChild(h1);
+  stage.appendChild(box);
+
+  const paragraphs = Array.from(heroInner.querySelectorAll(':scope > p'));
+  const kicker = paragraphs[0] && !isLinkRow(paragraphs[0]) ? paragraphs[0] : null;
+  if (kicker) {
+    kicker.textContent.split('·').map((s) => s.trim()).filter(Boolean).slice(0, 4).forEach((text, i) => {
+      const note = document.createElement('span');
+      note.className = 'sticky sticky-' + (i + 1);
+      note.textContent = text;
+      stage.appendChild(note);
+      if (i < 2) stage.insertAdjacentHTML('beforeend', arrowSvg(i + 1));
+    });
+    kicker.remove();
+  }
+  heroInner.querySelectorAll(':scope > p').forEach((p) => {
+    if (!isLinkRow(p)) p.classList.add('hero-summary');
+  });
   markLinkRows(heroInner);
+}
+
+function arrowSvg(n) {
+  return '<svg class="arrow arrow-' + n + '" viewBox="0 0 54 40" aria-hidden="true">' +
+    '<path class="arrow-path" d="M6 36 C10 20 22 10 44 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
+    '<path class="arrow-path" d="M36 2 L45 6 L38 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 }
 
 // Wrap each character so the name can slide in letter by letter.
@@ -264,7 +291,7 @@ function buildSections() {
     markLinkRows(body);
     if (cards) {
       Array.from(cards.children).forEach(addCardMedia);
-      addFilters(cards);
+      if (!buildFolders(cards)) buildTimeline(cards);
     }
 
     // Cards that are just a heading plus tags read better as full-width rows.
@@ -300,40 +327,155 @@ function addCardMedia(card) {
   }
 }
 
-// Long card lists get filter chips built from the first part of each card's
-// *Category · Detail* line.
-function addFilters(cards) {
+// Long card lists become a shelf of colored folders, one per category (the first
+// part of each card's *Category · Detail* line), with project covers peeking
+// out. Clicking a folder opens it: the cards below switch to that category.
+function buildFolders(cards) {
   const items = Array.from(cards.children);
   const category = (card) => (card.querySelector('.meta')?.textContent.split('·')[0] || '').trim();
   const names = [...new Set(items.map(category).filter(Boolean))];
-  if (items.length < 8 || names.length < 2) return;
+  if (items.length < 8 || names.length < 2) return false;
 
   items.forEach((card) => { card.dataset.category = category(card); });
-  const bar = document.createElement('div');
-  bar.className = 'filters';
-  bar.setAttribute('role', 'toolbar');
-  bar.setAttribute('aria-label', 'Filter projects');
-  ['All', ...names].forEach((name, i) => {
+  cards.id = cards.id || 'folder-panel-' + Math.random().toString(36).slice(2, 7);
+  cards.classList.add('folder-panel');
+  cards.setAttribute('role', 'tabpanel');
+
+  const shelf = document.createElement('div');
+  shelf.className = 'folders';
+  shelf.setAttribute('role', 'tablist');
+  shelf.setAttribute('aria-label', 'Project folders');
+
+  const buttons = names.map((name) => {
+    const inFolder = items.filter((c) => c.dataset.category === name);
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'filter' + (i === 0 ? ' active' : '');
-    btn.textContent = name;
-    btn.setAttribute('aria-pressed', String(i === 0));
-    btn.addEventListener('click', () => {
-      bar.querySelectorAll('.filter').forEach((b) => {
-        b.classList.toggle('active', b === btn);
-        b.setAttribute('aria-pressed', String(b === btn));
-      });
-      const shown = items.filter((c) => name === 'All' || c.dataset.category === name);
-      items.forEach((c) => { c.hidden = !shown.includes(c); });
-      if (window.gsap && !reduceMotion) {
-        gsap.fromTo(shown, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out', stagger: 0.04, overwrite: true, clearProps: 'transform' });
-        ScrollTrigger.refresh();
-      }
-    });
-    bar.appendChild(btn);
+    btn.className = 'folder';
+    btn.setAttribute('role', 'tab');
+    btn.setAttribute('aria-controls', cards.id);
+    const papers = inFolder
+      .map((c) => c.querySelector('.card-media img')?.getAttribute('src'))
+      .filter(Boolean).slice(0, 3)
+      .map((src) => '<img src="' + src + '" alt="" loading="lazy" decoding="async">').join('');
+    btn.innerHTML =
+      '<span class="folder-art" aria-hidden="true"><span class="folder-back"></span>' +
+      '<span class="folder-papers">' + papers + '</span>' +
+      '<span class="folder-front"><span class="folder-count">' + inFolder.length + ' project' + (inFolder.length === 1 ? '' : 's') + '</span></span></span>' +
+      '<span class="folder-label"></span>';
+    btn.querySelector('.folder-label').textContent = name;
+    btn.addEventListener('click', () => open(name, btn, true));
+    shelf.appendChild(btn);
+    return btn;
   });
-  cards.before(bar);
+
+  // Arrow keys move between folders, like any tab list.
+  shelf.addEventListener('keydown', (e) => {
+    const i = buttons.indexOf(document.activeElement);
+    if (i < 0 || !['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+    const next = buttons[(i + (e.key === 'ArrowRight' ? 1 : buttons.length - 1)) % buttons.length];
+    next.focus();
+    next.click();
+  });
+
+  function open(name, btn, animateIn) {
+    buttons.forEach((b) => {
+      b.setAttribute('aria-selected', String(b === btn));
+      b.tabIndex = b === btn ? 0 : -1;
+    });
+    cards.dataset.label = name;
+    cards.style.setProperty('--f', getComputedStyle(btn).getPropertyValue('--f'));
+    const shown = items.filter((c) => c.dataset.category === name);
+    items.forEach((c) => { c.hidden = !shown.includes(c); });
+    if (animateIn && window.gsap && !reduceMotion) {
+      gsap.fromTo(shown, { y: 40, opacity: 0, rotate: 1 }, { y: 0, opacity: 1, rotate: 0, duration: 0.55, ease: 'power3.out', stagger: 0.05, overwrite: true, clearProps: 'transform' });
+      ScrollTrigger.refresh();
+    }
+  }
+
+  cards.before(shelf);
+  open(names[0], buttons[0], false);
+  return true;
+}
+
+// Cards that are all dated become a timeline: a line winds between dots,
+// with entries alternating left and right of it.
+function buildTimeline(cards) {
+  const items = Array.from(cards.children);
+  const dated = (c) => /\d{4}/.test(c.querySelector('.meta')?.textContent || '');
+  if (items.length < 3 || !items.every(dated) || items.some((c) => c.classList.contains('has-media'))) return;
+
+  cards.classList.remove('cards');
+  cards.classList.add('timeline');
+  items.forEach((card, i) => {
+    card.classList.add('tl-item', i % 2 ? 'tl-right' : 'tl-left');
+    const meta = card.querySelector('.meta');
+    const body = document.createElement('div');
+    body.className = 'tl-body';
+    Array.from(card.childNodes).forEach((n) => { if (n !== meta) body.appendChild(n); });
+    const dot = document.createElement('span');
+    dot.className = 'tl-dot';
+    card.append(dot, meta, body);
+  });
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('class', 'tl-line');
+  svg.setAttribute('aria-hidden', 'true');
+  const path = document.createElementNS(svgNS, 'path');
+  path.setAttribute('class', 'tl-path');
+  const tail = document.createElementNS(svgNS, 'path');
+  tail.setAttribute('class', 'tl-tail');
+  svg.append(path, tail);
+  cards.prepend(svg);
+
+  const end = document.createElement('div');
+  end.className = 'tl-end';
+  end.textContent = 'what’s next?';
+  cards.appendChild(end);
+
+  // Redraw the line through the dots whenever the layout changes.
+  let progress = reduceMotion ? 1 : 0;
+  const draw = () => {
+    const box = cards.getBoundingClientRect();
+    const pts = items.map((c) => {
+      const r = c.querySelector('.tl-dot').getBoundingClientRect();
+      return { x: r.left + r.width / 2 - box.left, y: r.top + r.height / 2 - box.top };
+    });
+    svg.setAttribute('width', box.width);
+    svg.setAttribute('height', box.height);
+    svg.setAttribute('viewBox', '0 0 ' + box.width + ' ' + box.height);
+
+    let d = 'M ' + pts[0].x + ' 0 V ' + pts[0].y;
+    for (let i = 1; i < pts.length; i++) {
+      const a = pts[i - 1], b = pts[i];
+      const dx = b.x - a.x;
+      if (Math.abs(dx) < 1) { d += ' V ' + b.y; continue; }
+      const s = Math.sign(dx);
+      const mid = (a.y + b.y) / 2;
+      const r = Math.min(26, Math.abs(dx) / 2, (b.y - a.y) / 4);
+      d += ' V ' + (mid - r) + ' Q ' + a.x + ' ' + mid + ' ' + (a.x + s * r) + ' ' + mid +
+        ' H ' + (b.x - s * r) + ' Q ' + b.x + ' ' + mid + ' ' + b.x + ' ' + (mid + r) + ' V ' + b.y;
+    }
+    path.setAttribute('d', d);
+    const last = pts[pts.length - 1];
+    const endBox = end.getBoundingClientRect();
+    tail.setAttribute('d', 'M ' + last.x + ' ' + last.y + ' V ' + (endBox.top + endBox.height / 2 - box.top));
+
+    const len = path.getTotalLength();
+    path.style.strokeDasharray = len;
+    path.style.strokeDashoffset = len * (1 - progress);
+  };
+  new ResizeObserver(draw).observe(cards);
+  document.fonts?.ready.then(draw);
+  draw();
+
+  cards.setProgress = (p) => {
+    progress = p;
+    const len = path.getTotalLength();
+    path.style.strokeDashoffset = len * (1 - p);
+    tail.style.opacity = p > 0.98 ? 1 : 0;
+  };
+  if (!reduceMotion) tail.style.opacity = 0;
 }
 
 function isVideo(href) { return /\.(mp4|m4v|mov|webm)$/i.test(new URL(href, location.href).pathname); }
@@ -427,14 +569,15 @@ function animate() {
   if (reduceMotion || !window.gsap || !window.ScrollTrigger) return;
   gsap.registerPlugin(ScrollTrigger);
 
-  gsap.from('.hero h1 .char', { yPercent: 110, duration: 1.1, ease: 'expo.out', stagger: 0.035, delay: 0.15 });
-  gsap.from('.hero-inner > :not(h1)', { y: 30, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.12, delay: 0.6 });
-
-  // Hero content drifts up and fades as you scroll past it.
-  gsap.to('.hero-inner', {
-    yPercent: -18, opacity: 0.2, ease: 'none',
-    scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
-  });
+  // Hero: name types in pixel by pixel, the box draws, notes slap on, arrows draw.
+  const intro = gsap.timeline({ delay: 0.1 });
+  intro
+    .from('.hello', { y: -12, opacity: 0, duration: 0.5, ease: 'power2.out' })
+    .fromTo('.name-box', { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: 0.7, ease: 'steps(12)', clearProps: 'clipPath' }, '-=0.1')
+    .from('.hero h1 .char', { opacity: 0, duration: 0.01, stagger: 0.05 }, '<')
+    .from('.sticky', { scale: 1.6, opacity: 0, duration: 0.45, ease: 'back.out(2.5)', stagger: 0.12, clearProps: 'transform' }, '-=0.1')
+    .fromTo('.arrow-path', { strokeDasharray: 80, strokeDashoffset: 80 }, { strokeDashoffset: 0, duration: 0.5, ease: 'power1.inOut' }, '-=0.2')
+    .from('.hero-inner > p', { y: 20, opacity: 0, duration: 0.6, ease: 'power3.out', stagger: 0.12 }, '-=0.3');
 
   // Marquee picks up speed in the direction you scroll.
   const track = document.querySelector('.marquee-track');
@@ -451,13 +594,39 @@ function animate() {
 
   gsap.utils.toArray('.section h2').forEach((h2) => {
     gsap.from(h2, {
-      y: 80, opacity: 0, duration: 1, ease: 'expo.out',
+      y: 80, opacity: 0, duration: 1, ease: 'expo.out', clearProps: 'transform',
       scrollTrigger: { trigger: h2, start: 'top 88%' },
     });
   });
 
-  gsap.set('.card', { opacity: 0 });
-  ScrollTrigger.batch('.card', {
+  // Folders pop up one after another.
+  gsap.utils.toArray('.folders').forEach((shelf) => {
+    gsap.from(shelf.children, {
+      y: 50, opacity: 0, rotate: (i) => (i % 2 ? 4 : -4), duration: 0.7, ease: 'back.out(1.6)', stagger: 0.1, clearProps: 'transform',
+      scrollTrigger: { trigger: shelf, start: 'top 85%' },
+    });
+  });
+
+  // Timeline: the line draws itself as you scroll; entries slide in from their side.
+  document.querySelectorAll('.timeline').forEach((tl) => {
+    ScrollTrigger.create({
+      trigger: tl, start: 'top 70%', end: 'bottom 75%', scrub: 0.6,
+      onUpdate: (self) => tl.setProgress(self.progress),
+    });
+    tl.querySelectorAll('.tl-item').forEach((item) => {
+      gsap.from(item.querySelector('.tl-body'), {
+        x: item.classList.contains('tl-left') ? -40 : 40, opacity: 0, duration: 0.8, ease: 'power3.out', clearProps: 'transform',
+        scrollTrigger: { trigger: item, start: 'top 80%' },
+      });
+      gsap.from([item.querySelector('.tl-dot'), item.querySelector('.meta')], {
+        scale: 0, opacity: 0, duration: 0.5, ease: 'back.out(2.5)', clearProps: 'transform',
+        scrollTrigger: { trigger: item, start: 'top 80%' },
+      });
+    });
+  });
+
+  gsap.set('.card:not(.tl-item)', { opacity: 0 });
+  ScrollTrigger.batch('.card:not(.tl-item)', {
     start: 'top 90%',
     onEnter: (batch) => gsap.fromTo(batch,
       { y: 70, opacity: 0, rotate: 1.5 },
@@ -471,6 +640,13 @@ function animate() {
     });
   });
 
+  // Sticky notes get slapped onto the page.
+  gsap.utils.toArray('ul.stats').forEach((ul) => {
+    gsap.fromTo(ul.children, { scale: 1.4, opacity: 0 }, {
+      scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(2.2)', stagger: 0.1, clearProps: 'transform',
+      scrollTrigger: { trigger: ul, start: 'top 88%' },
+    });
+  });
   document.querySelectorAll('.stat-value').forEach(countUp);
 
   gsap.utils.toArray('ul.bars').forEach((ul) => {
@@ -482,9 +658,9 @@ function animate() {
 
   const finale = document.querySelector('.finale');
   if (finale) {
-    gsap.fromTo(finale, { scale: 0.9, borderRadius: '80px' }, {
-      scale: 1, borderRadius: '40px', ease: 'none',
-      scrollTrigger: { trigger: finale, start: 'top bottom', end: 'top 40%', scrub: true },
+    gsap.fromTo(finale, { y: 80, rotate: -1.5 }, {
+      y: 0, rotate: 0, ease: 'none', clearProps: 'transform',
+      scrollTrigger: { trigger: finale, start: 'top bottom', end: 'top 55%', scrub: true },
     });
   }
 }
@@ -513,28 +689,4 @@ function highlightActiveSection() {
   };
   window.addEventListener('scroll', update, { passive: true });
   update();
-}
-
-// Header is see-through over the hero and turns solid once you scroll past it.
-function setupHeader() {
-  const update = () => header.classList.toggle('solid', window.scrollY > hero.offsetHeight - 80);
-  window.addEventListener('scroll', update, { passive: true });
-  update();
-}
-
-function setupThemeToggle() {
-  const root = document.documentElement;
-  try {
-    const saved = localStorage.getItem('theme');
-    if (saved) root.dataset.theme = saved;
-  } catch (e) {}
-
-  document.getElementById('theme-toggle').addEventListener('click', () => {
-    const current = root.dataset.theme ||
-      (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    const next = current === 'dark' ? 'light' : 'dark';
-    root.dataset.theme = next;
-    try { localStorage.setItem('theme', next); } catch (e) {}
-    window.dispatchEvent(new Event('themechange'));
-  });
 }
