@@ -200,10 +200,9 @@ A concept digital display and 2025 website launch for a sustainable Scottish kil
 ## Experience
 
 ### Editorial & Content Lead — ICH Creative Consulting LLP
-*June 2025 – Present*
+*June 2024 – Present*
 
-### Editorial Designer — ICH Creative Consulting LLP
-*June 2024 – May 2025*
+Editorial & Content Lead since June 2025; Editorial Designer, June 2024 – May 2025.
 
 - **Secured business expansion:** Contributed to Myntra extending and expanding its contract, resulting in ~38% business growth.
 - **Editorial strategy:** Planned and structured the editorial calendar, aligning content strategies and curation with consumer sentiment and upcoming fashion trends.
