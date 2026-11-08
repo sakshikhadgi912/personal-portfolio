@@ -218,6 +218,9 @@ I manage Instagram for ICH NEXT®, India's first indigenous trend forecast for f
 
 Creative & Content Lead: Marketing since June 2026; Editorial & Content Lead since June 2025; Editorial Designer, June 2024 – June 2025.
 
+- **Social media strategy:** Strategic planning for social media across all platforms.
+- **Campaign & calendar planning:** Planned and executed campaigns and the content calendar.
+- **Exhibitor collaborations:** Collaborated with exhibitors to promote ICH, displaying consumer sentiment at the NICE event and PAMPA at NGMA.
 - **Secured business expansion:** Contributed to Myntra extending and expanding its contract, resulting in ~38% business growth.
 - **Editorial strategy:** Planned and structured the editorial calendar, aligning content strategies and curation with consumer sentiment and upcoming fashion trends.
 - **Creative direction:** Oversaw end-to-end execution of digital editorials, from visual storytelling to narrative building.
