@@ -213,10 +213,10 @@ I manage Instagram for ICH NEXT®, India's first indigenous trend forecast for f
 
 ## Experience
 
-### Editorial & Content Lead — ICH Creative Consulting LLP
+### Creative & Content Lead: Marketing — ICH Creative Consulting Private Limited
 *June 2024 – Present*
 
-Editorial & Content Lead since June 2025; Editorial Designer, June 2024 – May 2025.
+Creative & Content Lead: Marketing since June 2026; Editorial & Content Lead since June 2025; Editorial Designer, June 2024 – June 2025.
 
 - **Secured business expansion:** Contributed to Myntra extending and expanding its contract, resulting in ~38% business growth.
 - **Editorial strategy:** Planned and structured the editorial calendar, aligning content strategies and curation with consumer sentiment and upcoming fashion trends.
