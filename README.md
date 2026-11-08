@@ -287,6 +287,8 @@ Major: Accessory Design · Minor: Fashion Communication
 - Midjourney
 - Gemini
 - ChatGPT
+- Claude
+- Adobe Firefly
 
 ## Contact
 
