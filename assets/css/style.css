@@ -19,7 +19,8 @@
   --butter: #fbe38e;
   --blush: #ffd3dc;
 
-  --display: "Avenir Next", "Avenir", "Nunito Sans", system-ui, sans-serif;
+  --display: "Libre Bodoni", "Bodoni 72", Didot, Georgia, serif;
+  --body: "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --hand: "Gochi Hand", "Comic Sans MS", cursive;
   --mono: "Space Mono", ui-monospace, Menlo, monospace;
   --serif: "Instrument Serif", Georgia, serif;
@@ -44,7 +45,7 @@ body {
   margin: 0;
   padding: 28px 28px 40px;
   color: var(--ink);
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--body);
   font-size: 16.5px;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
@@ -162,13 +163,13 @@ img { max-width: 100%; height: auto; }
 .hero h1 {
   margin: 0;
   font-family: var(--display);
-  font-weight: 800;
+  font-weight: 700;
   font-size: clamp(2.6rem, 10vw, 7.5rem);
   line-height: 0.95;
   letter-spacing: -0.02em;
   text-transform: uppercase;
 }
-.hero h1 .word { display: inline-block; white-space: nowrap; }
+.hero h1 .word { display: inline-block; white-space: nowrap; margin-inline: 0.12em; }
 .hero h1 .char { display: inline-block; }
 
 .sticky {
@@ -342,10 +343,11 @@ img { max-width: 100%; height: auto; }
 
 .card h3 {
   margin: 0;
+  font-family: var(--display);
   font-size: 1.3rem;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.2;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
 .company {
@@ -617,7 +619,7 @@ img { max-width: 100%; height: auto; }
 .tl-body h3 { font-size: 1.35rem; }
 .tl-body p { font-family: var(--hand); font-size: 1.12rem; color: var(--muted); }
 .tl-body li { font-family: var(--mono); font-size: 0.8rem; line-height: 1.6; }
-.tl-body li strong { font-family: "Inter", sans-serif; font-size: 0.9rem; }
+.tl-body li strong { font-family: var(--body); font-size: 0.9rem; }
 
 .tl-end {
   position: absolute;
