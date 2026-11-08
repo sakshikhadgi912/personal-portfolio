@@ -571,7 +571,7 @@ img { max-width: 100%; height: auto; }
   display: flex;
   flex-direction: column;
   gap: 64px;
-  padding: 8px 0 120px;
+  padding: 8px 0 24px;
 }
 .tl-line {
   position: absolute;
@@ -580,7 +580,6 @@ img { max-width: 100%; height: auto; }
   pointer-events: none;
 }
 .tl-path { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-.tl-tail { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-dasharray: 2 9; stroke-linecap: round; }
 
 .timeline .card,
 .timeline .card:hover {
@@ -622,16 +621,6 @@ img { max-width: 100%; height: auto; }
 .tl-body p { font-family: var(--body); font-style: italic; font-size: 0.95rem; color: var(--muted); }
 .tl-body li { font-family: var(--mono); font-size: 0.88rem; line-height: 1.6; }
 .tl-body li strong { font-family: var(--body); font-size: 0.9rem; }
-
-.tl-end {
-  position: absolute;
-  bottom: 0;
-  left: 58%;
-  translate: 28px 0;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 1.8rem;
-}
 
 /* Tags: notched stickers */
 ul.tags {
@@ -905,12 +894,11 @@ hr { border: 0; border-top: 2px dashed var(--soft); margin: 32px 0; }
   .folder-panel { padding: 24px 14px; }
 
   /* Timeline runs down the left edge */
-  .timeline { gap: 48px; padding-bottom: 90px; }
+  .timeline { gap: 48px; padding-bottom: 24px; }
   .tl-left .tl-dot, .tl-right .tl-dot { left: 12px; }
   .tl-item .meta { position: static; display: inline-block; margin: 0 0 8px 40px; white-space: normal; }
   .tl-body, .tl-left .tl-body, .tl-right .tl-body { width: auto; margin: 0 0 0 40px; text-align: left; }
   .tl-left .tl-body ul { padding-left: 1.1em; list-style: disc; }
-  .tl-end { left: 12px; translate: 26px 0; font-size: 1.4rem; }
 
   .cards-rows .card { grid-template-columns: 1fr; gap: 10px; }
   .section.finale { margin-inline: -16px; }

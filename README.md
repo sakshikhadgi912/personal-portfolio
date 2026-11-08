@@ -168,7 +168,7 @@ A brand identity for an inclusive, human-centred design studio — positioning, 
 
 A UX pitch for Birla Opus's online wallpaper journey: an "Inspire › Clarify › Imaginate" flow with shop-by-room, a lighting toggle, a roll calculator and an in-page visualiser.
 
-[View deck](assets/projects/pdf/birla-opus-pitch-deck.pdf)
+[View deck](assets/projects/pdf/birla-opus-pitch-deck.pdf) · [View Figma prototype](https://www.figma.com/proto/ZDL550b4qUMy0y7dy3Tglp/Birla-opus?page-id=0%3A1&node-id=808-967&p=f&viewport=-66%2C229%2C0.13&t=M31doYSBcvI8AZHF-1&scaling=scale-down&content-scaling=fixed)
 
 ### Metaverse Fashion Marketing
 *Research · University of Southampton*

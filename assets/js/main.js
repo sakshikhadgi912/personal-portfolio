@@ -423,15 +423,8 @@ function buildTimeline(cards) {
   svg.setAttribute('aria-hidden', 'true');
   const path = document.createElementNS(svgNS, 'path');
   path.setAttribute('class', 'tl-path');
-  const tail = document.createElementNS(svgNS, 'path');
-  tail.setAttribute('class', 'tl-tail');
-  svg.append(path, tail);
+  svg.appendChild(path);
   cards.prepend(svg);
-
-  const end = document.createElement('div');
-  end.className = 'tl-end';
-  end.textContent = 'what’s next?';
-  cards.appendChild(end);
 
   // Redraw the line through the dots whenever the layout changes.
   let progress = reduceMotion ? 1 : 0;
@@ -457,9 +450,6 @@ function buildTimeline(cards) {
         ' H ' + (b.x - s * r) + ' Q ' + b.x + ' ' + mid + ' ' + b.x + ' ' + (mid + r) + ' V ' + b.y;
     }
     path.setAttribute('d', d);
-    const last = pts[pts.length - 1];
-    const endBox = end.getBoundingClientRect();
-    tail.setAttribute('d', 'M ' + last.x + ' ' + last.y + ' V ' + (endBox.top + endBox.height / 2 - box.top));
 
     const len = path.getTotalLength();
     path.style.strokeDasharray = len;
@@ -473,9 +463,7 @@ function buildTimeline(cards) {
     progress = p;
     const len = path.getTotalLength();
     path.style.strokeDashoffset = len * (1 - p);
-    tail.style.opacity = p > 0.98 ? 1 : 0;
   };
-  if (!reduceMotion) tail.style.opacity = 0;
 }
 
 function isVideo(href) { return /\.(mp4|m4v|mov|webm)$/i.test(new URL(href, location.href).pathname); }
